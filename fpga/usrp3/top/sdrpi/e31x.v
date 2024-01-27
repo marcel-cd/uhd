@@ -70,13 +70,13 @@ module e31x (
   input [34:0]  DB_EXP_1_8V,
 
   // Front-end Band Selects
-  output [2:0]  TX_BANDSEL,
-  output [2:0]  RX1_BANDSEL,
-  output [2:0]  RX2_BANDSEL,
-  output [1:0]  RX2C_BANDSEL,
-  output [1:0]  RX1B_BANDSEL,
-  output [1:0]  RX1C_BANDSEL,
-  output [1:0]  RX2B_BANDSEL,
+  // output [2:0]  TX_BANDSEL,
+  // output [2:0]  RX1_BANDSEL,
+  // output [2:0]  RX2_BANDSEL,
+  // output [1:0]  RX2C_BANDSEL,
+  // output [1:0]  RX1B_BANDSEL,
+  // output [1:0]  RX1C_BANDSEL,
+  // output [1:0]  RX2B_BANDSEL,
 
   // Enables
   output        TX_ENABLE1A,
@@ -85,10 +85,10 @@ module e31x (
   output        TX_ENABLE2B,
 
   // Antenna Selects
-  output        VCTXRX1_V1,
-  output        VCTXRX1_V2,
-  output        VCTXRX2_V1,
-  output        VCTXRX2_V2,
+  // output        VCTXRX1_V1,
+  // output        VCTXRX1_V2,
+  // output        VCTXRX2_V1,
+  // output        VCTXRX2_V2,
   output        VCRX1_V1,
   output        VCRX1_V2,
   output        VCRX2_V1,
@@ -110,7 +110,6 @@ module e31x (
   output        CAT_SCLK,
   output        CAT_MOSI,
   input         CAT_MISO,
-  input         CAT_BBCLK_OUT, //unused
   output        CAT_SYNC,
   output        CAT_TXNRX,
   output        CAT_ENABLE,
@@ -785,20 +784,21 @@ module e31x (
   endgenerate
 
   // DB_GPIO and LED pin assignments with software mapping
-  wire [2:0] TX1_BANDSEL;
-  wire [2:0] TX2_BANDSEL;
+  // wire [2:0] TX1_BANDSEL;
+  // wire [2:0] TX2_BANDSEL;
 
   // Channel 0
-  assign {VCRX1_V1, // [15:15]
-          VCRX1_V2, // [14:14]
-          VCTXRX1_V1, // [13:13]
-          VCTXRX1_V2, // [12:12]
+  assign {
+          // VCRX1_V1, // [15:15]
+          // VCRX1_V2, // [14:14]
+          // VCTXRX1_V1, // [13:13]
+          // VCTXRX1_V2, // [12:12]
           TX_ENABLE1B, // [11:11]
-          TX_ENABLE1A, // [10:10]
-          RX1C_BANDSEL, // [9:8]
-          RX1B_BANDSEL, // [7:6]
-          RX1_BANDSEL, // [5:3]
-          TX1_BANDSEL // [2:0]
+          TX_ENABLE1A // [10:10]
+          // RX1C_BANDSEL, // [9:8]
+          // RX1B_BANDSEL, // [7:6]
+          // RX1_BANDSEL, // [5:3]
+          // TX1_BANDSEL // [2:0]
          } = db_gpio_pins[1];
 
   assign {LED_RX1_RX,
@@ -807,16 +807,17 @@ module e31x (
          } = leds[1];
 
   // Channel 1
-  assign {VCRX2_V1,
-          VCRX2_V2,
-          VCTXRX2_V1,
-          VCTXRX2_V2,
+  assign {
+          // VCRX2_V1,
+          // VCRX2_V2,
+          // VCTXRX2_V1,
+          // VCTXRX2_V2,
           TX_ENABLE2B,
-          TX_ENABLE2A,
-          RX2C_BANDSEL,
-          RX2B_BANDSEL,
-          RX2_BANDSEL,
-          TX2_BANDSEL
+          TX_ENABLE2A
+          // RX2C_BANDSEL,
+          // RX2B_BANDSEL,
+          // RX2_BANDSEL,
+          // TX2_BANDSEL
          } = db_gpio_pins[0];
 
   assign {LED_RX2_RX,
@@ -827,7 +828,7 @@ module e31x (
   // It is okay to OR here as the both channels must be set to the same freq.
   // This is needed so software does not have to set properties of radio core 0
   // when only using radio core 1.
-  assign TX_BANDSEL = TX1_BANDSEL | TX2_BANDSEL;
+  // assign TX_BANDSEL = TX1_BANDSEL | TX2_BANDSEL;
 
   /////////////////////////////////////////////////////////////////////
   //

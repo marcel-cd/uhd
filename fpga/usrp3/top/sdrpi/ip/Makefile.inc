@@ -6,7 +6,6 @@
 #include $(IP_DIR)/axi64_4k_2clk_fifo/Makefile.inc
 #include $(IP_DIR)/axi64_8k_2clk_fifo/Makefile.inc
 #include $(IP_DIR)/axi_intercon_4x64_256_bd/Makefile.inc
-#include $(IP_DIR)/ddr3_32bit/Makefile.inc
 include $(IP_DIR)/fifo_4k_2clk/Makefile.inc
 include $(IP_DIR)/fifo_short_2clk/Makefile.inc
 #include $(IP_DIR)/input_sample_fifo/Makefile.inc
@@ -16,7 +15,6 @@ include $(IP_DIR)/fifo_short_2clk/Makefile.inc
 #include $(IP_DIR)/axi4_to_axi3_protocol_converter_32/Makefile.inc
 #include $(IP_DIR)/axi4_to_axi3_protocol_converter_64/Makefile.inc
 include $(IP_DIR)/e31x_ps_bd/Makefile.inc
-include $(IP_DIR)/ddr3_16bit/Makefile.inc
 include $(IP_DIR)/axi_inter_2x64_128_bd/Makefile.inc
 
 BD_SRCS = \
@@ -35,9 +33,6 @@ $(IP_FIFO_4K_2CLK_SRCS) \
 #$(IP_AXI4_TO_AXI3_PROTOCOL_CONVERTER_64_SRCS) \
 #$(IP_AXIS_FIFO_TO_AXI4LITE_SRCS) \
 #$(IP_MISC_CLOCK_GEN_SRCS) \
-
-IP_DRAM_XCI_SRCS = \
-$(IP_DDR3_16BIT_SRCS)
 
 ## Currently unused
 ## $(IP_INPUT_SAMPLE_FIFO_SRCS) \

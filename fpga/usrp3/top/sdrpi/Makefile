@@ -70,7 +70,7 @@ SDRPI_IDLE E3XX_idle: SDRPI_IP build/usrp_e310_sg1_idle_fpga.dts
 
 ##SDRPI:       Build USRP E3XX (Speed Grade 1).
 SDRPI E310: SDRPI_IP build/usrp_e310_sg1_fpga.dts
-	$(call vivado_build,SDRPI,$(DEFS) SDRPI=1 $(if $(DRAM),ENABLE_DRAM=1,))
+	$(call vivado_build,SDRPI,$(DEFS) SDRPI=1 $(if $(DRAM),ENABLE_DRAM=0,))
 	$(call post_build,$@,SDRPI)
 
 build/%.dts: dts/%.dts dts/*.dtsi
