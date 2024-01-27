@@ -11,8 +11,6 @@
 ###############################################################################
 
 # 10MHz / PPS References
-create_clock -period 100.000 -name pps_ext [get_nets PPS_EXT_IN]
-
 create_clock -period 100.000 -name gps_pps [get_nets GPS_PPS]
 
 # TCXO clock 40 MHz
@@ -57,7 +55,6 @@ set_clock_groups -asynchronous \
 
 set_clock_groups -asynchronous \
   -group [get_clocks -include_generated_clocks *clk_200M_o] \
-  -group [get_clocks -include_generated_clocks pps_ext] \
   -group [get_clocks -include_generated_clocks gps_pps]
 
 
@@ -115,7 +112,6 @@ set_min_delay -from [get_ports CAT_MISO] \
 # Asynchronous clock domains
 set_clock_groups -asynchronous \
     -group [get_clocks -include_generated_clocks bus_clk] \
-    -group [get_clocks -include_generated_clocks pps_ext] \
     -group [get_clocks -include_generated_clocks gps_pps]
 
 # TCXO DAC SPI
