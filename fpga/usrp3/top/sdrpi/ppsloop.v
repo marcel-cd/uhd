@@ -9,7 +9,6 @@ module ppsloop(
     input reset,
     input xoclk, // 40 MHz from VCTCXO
     input ppsgps,
-    input ppsext,
     input [1:0] refsel,
     output reg lpps,
     output reg is10meg,
@@ -22,7 +21,6 @@ module ppsloop(
     input [15:0] dac_dflt
    );
   wire ppsref = (refsel==2'b00)?ppsgps:
-                (refsel==2'b11)?ppsext:
                                 1'b0;
   // reference pps to discilpline the VCTX|CXO to, from GPS or EXT in
 

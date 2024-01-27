@@ -35,18 +35,11 @@ module e31x (
   inout         DDR_VRP,
   inout         DDR_VRN,
 
-  //AVR SPI IO
-  input         AVR_CS_R,
-  output        AVR_IRQ,
-  output        AVR_MISO_R,
-  input         AVR_MOSI_R,
-  input         AVR_SCK_R,
-
   input         ONSWITCH_DB,
 
   // pps connections
   input         GPS_PPS,
-  input         PPS_EXT_IN,
+//  input         PPS_EXT_IN,
 
   // gpios, change to inout somehow
   inout [5:0]   PL_GPIO,
@@ -137,7 +130,7 @@ module e31x (
 
   reg [2:0] pps_reg;
 
-  wire pps_ext = PPS_EXT_IN;
+  // wire pps_ext = PPS_EXT_IN;
   wire gps_pps = GPS_PPS;
 
   // connect PPS input to GPIO so ntpd can use it
@@ -341,48 +334,6 @@ module e31x (
     .m_axis_dma_tvalid()
   );
 
-  /////////////////////////////////////////////////////////////////////
-  //
-  // PMU
-  //
-  //////////////////////////////////////////////////////////////////////
-
-  axi_pmu inst_axi_pmu (
-    .s_axi_aclk(clk40),  // TODO: Original design used bus_clk
-    .s_axi_areset(clk40_rst),
-
-    .ss(AVR_CS_R),
-    .mosi(AVR_MOSI_R),
-    .sck(AVR_SCK_R),
-    .miso(AVR_MISO_R),
-
-    // AXI4-Lite: Write address port (domain: s_axi_aclk)
-    .s_axi_awaddr(m_axi_pmu_awaddr),
-    .s_axi_awvalid(m_axi_pmu_awvalid),
-    .s_axi_awready(m_axi_pmu_awready),
-    // AXI4-Lite: Write data port (domain: s_axi_aclk)
-    .s_axi_wdata(m_axi_pmu_wdata),
-    .s_axi_wstrb(m_axi_pmu_wstrb),
-    .s_axi_wvalid(m_axi_pmu_wvalid),
-    .s_axi_wready(m_axi_pmu_wready),
-    // AXI4-Lite: Write response port (domain: s_axi_aclk)
-    .s_axi_bresp(m_axi_pmu_bresp),
-    .s_axi_bvalid(m_axi_pmu_bvalid),
-    .s_axi_bready(m_axi_pmu_bready),
-    // AXI4-Lite: Read address port (domain: s_axi_aclk)
-    .s_axi_araddr(m_axi_pmu_araddr),
-    .s_axi_arvalid(m_axi_pmu_arvalid),
-    .s_axi_arready(m_axi_pmu_arready),
-    // AXI4-Lite: Read data port (domain: s_axi_aclk)
-    .s_axi_rdata(m_axi_pmu_rdata),
-    .s_axi_rresp(m_axi_pmu_rresp),
-    .s_axi_rvalid(m_axi_pmu_rvalid),
-    .s_axi_rready(m_axi_pmu_rready),
-
-    .s_axi_irq(pmu_irq)
-  );
-
-  assign AVR_IRQ = 1'b0;
 
   localparam DB_E31X_IDLE_OUT = {
     1'b0,              /* DB_EXP_18_24 (99) */

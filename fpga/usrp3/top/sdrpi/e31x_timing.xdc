@@ -148,9 +148,6 @@ set_false_path -through [get_pins {usr_access_i/DATA[*]}]
 ###############################################################################
 set_false_path -from [get_ports CAT_CTRL_OUT]
 set_false_path -to [get_ports CAT_RESET]
-/* set_false_path -to [get_ports RX*_BANDSEL*] */
-/* set_false_path -to [get_ports TX_BANDSEL*] */
-set_false_path -to [get_ports TX_ENABLE*]
 set_false_path -to [get_ports LED_*]
 set_false_path -to [get_ports VCRX*]
 set_false_path -to [get_ports VCTX*]

@@ -36,70 +36,10 @@ module e31x (
   inout         DDR_VRP,
   inout         DDR_VRN,
 
-  // PL DRAM
-`ifdef ENABLE_DRAM
-  input         PL_DDR3_SYSCLK,
-  output        PL_DDR3_RESET_N,
-  inout  [15:0] PL_DDR3_DQ,
-  inout  [ 1:0] PL_DDR3_DQS_N,
-  inout  [ 1:0] PL_DDR3_DQS_P,
-  output [14:0] PL_DDR3_ADDR,
-  output [ 2:0] PL_DDR3_BA,
-  output        PL_DDR3_RAS_N,
-  output        PL_DDR3_CAS_N,
-  output        PL_DDR3_WE_N,
-  output [ 0:0] PL_DDR3_CK_P,
-  output [ 0:0] PL_DDR3_CK_N,
-  output [ 0:0] PL_DDR3_CKE,
-  output [ 1:0] PL_DDR3_DM,
-  output [ 0:0] PL_DDR3_ODT,
-`endif
-
-  //AVR SPI IO
-  input         AVR_CS_R,
-  output        AVR_IRQ,
-  output        AVR_MISO_R,
-  input         AVR_MOSI_R,
-  input         AVR_SCK_R,
-
-  input         ONSWITCH_DB,
-
-  // RF Board connections
-  // Change to inout/output as
-  // they are implemented/tested
-  input [34:0]  DB_EXP_1_8V,
-
-  // Front-end Band Selects
-  // output [2:0]  TX_BANDSEL,
-  // output [2:0]  RX1_BANDSEL,
-  // output [2:0]  RX2_BANDSEL,
-  // output [1:0]  RX2C_BANDSEL,
-  // output [1:0]  RX1B_BANDSEL,
-  // output [1:0]  RX1C_BANDSEL,
-  // output [1:0]  RX2B_BANDSEL,
-
-  // Enables
-  output        TX_ENABLE1A,
-  output        TX_ENABLE2A,
-  output        TX_ENABLE1B,
-  output        TX_ENABLE2B,
-
-  // Antenna Selects
-  // output        VCTXRX1_V1,
-  // output        VCTXRX1_V2,
-  // output        VCTXRX2_V1,
-  // output        VCTXRX2_V2,
-  output        VCRX1_V1,
-  output        VCRX1_V2,
-  output        VCRX2_V1,
-  output        VCRX2_V2,
-
   // Leds
   output        LED_TXRX1_TX,
-  output        LED_TXRX1_RX,
   output        LED_RX1_RX,
   output        LED_TXRX2_TX,
-  output        LED_TXRX2_RX,
   output        LED_RX2_RX,
 
   // AD9361 connections
@@ -123,7 +63,6 @@ module e31x (
 
   // pps connections
   input         GPS_PPS,
-  input         PPS_EXT_IN,
 
   // VTCXO and the DAC that feeds it
   output        TCXO_DAC_SYNC_N,
@@ -341,7 +280,6 @@ module e31x (
   reg [3:0] tcxo_status, st_rsync;
   reg [2:0] pps_reg;
 
-  wire pps_ext = PPS_EXT_IN;
   wire gps_pps = GPS_PPS;
 
   // A local pps signal is derived from the tcxo clock. If a reference
@@ -350,7 +288,7 @@ module e31x (
   // the reference.
   ppsloop ppslp (
     .reset(1'b0),
-    .xoclk(clk_tcxo), .ppsgps(gps_pps), .ppsext(pps_ext),
+    .xoclk(clk_tcxo), .ppsgps(gps_pps),
     .refsel(pps_select),
     .lpps(pps),
     .is10meg(is_10meg), .ispps(is_pps), .reflck(reflck), .plllck(plllck),
@@ -371,48 +309,6 @@ module e31x (
     pps_reg <= bus_rst ? 3'b000 : {pps_reg[1:0], GPS_PPS};
   assign ps_gpio_in[8] = pps_reg[2]; // 62
 
-  /////////////////////////////////////////////////////////////////////
-  //
-  // Power Button
-  //
-  //////////////////////////////////////////////////////////////////////
-
-  // register the debounced onswitch signal to detect edges,
-  // Note: ONSWITCH_DB is low active
-  reg [1:0] onswitch_edge;
-  always @ (posedge bus_clk)
-    onswitch_edge <= bus_rst ? 2'b00 : {onswitch_edge[0], ONSWITCH_DB};
-
-  wire button_press = ~ONSWITCH_DB & onswitch_edge[0] & onswitch_edge[1];
-  wire button_release = ONSWITCH_DB & ~onswitch_edge[0] & ~onswitch_edge[1];
-
-  // stretch the pulse so IRQs don't get lost
-  reg [7:0] button_press_reg, button_release_reg;
-  always @ (posedge bus_clk)
-    if (bus_rst) begin
-      button_press_reg <= 8'h00;
-      button_release_reg <= 8'h00;
-    end else begin
-      button_press_reg <= {button_press_reg[6:0], button_press};
-      button_release_reg <= {button_release_reg[6:0], button_release};
-    end
-
-  wire button_press_irq = |button_press_reg;
-  wire button_release_irq = |button_release_reg;
-
-  /////////////////////////////////////////////////////////////////////
-  //
-  // Interrupts Fabric to PS
-  //
-  //////////////////////////////////////////////////////////////////////
-
-  wire [15:0] IRQ_F2P;
-  wire pmu_irq;
-  assign IRQ_F2P = {12'b0,
-                    pmu_irq,            // Interrupt 32
-                    button_release_irq, // Interrupt 31
-                    button_press_irq,   // Interrupt 30
-                    1'b0};
 
   /////////////////////////////////////////////////////////////////////
   //
@@ -787,38 +683,12 @@ module e31x (
   // wire [2:0] TX1_BANDSEL;
   // wire [2:0] TX2_BANDSEL;
 
-  // Channel 0
-  assign {
-          // VCRX1_V1, // [15:15]
-          // VCRX1_V2, // [14:14]
-          // VCTXRX1_V1, // [13:13]
-          // VCTXRX1_V2, // [12:12]
-          TX_ENABLE1B, // [11:11]
-          TX_ENABLE1A // [10:10]
-          // RX1C_BANDSEL, // [9:8]
-          // RX1B_BANDSEL, // [7:6]
-          // RX1_BANDSEL, // [5:3]
-          // TX1_BANDSEL // [2:0]
-         } = db_gpio_pins[1];
 
   assign {LED_RX1_RX,
           LED_TXRX1_TX,
           LED_TXRX1_RX
          } = leds[1];
 
-  // Channel 1
-  assign {
-          // VCRX2_V1,
-          // VCRX2_V2,
-          // VCTXRX2_V1,
-          // VCTXRX2_V2,
-          TX_ENABLE2B,
-          TX_ENABLE2A
-          // RX2C_BANDSEL,
-          // RX2B_BANDSEL,
-          // RX2_BANDSEL,
-          // TX2_BANDSEL
-         } = db_gpio_pins[0];
 
   assign {LED_RX2_RX,
           LED_TXRX2_TX,
@@ -944,25 +814,6 @@ module e31x (
     .rx(rx_flat),
     .tx(tx_flat),
 
-    // DRAM Controller Clock
-    .ddr3_sys_clk(PL_DDR3_SYSCLK),
-
-    // DRAM Chip Interface
-    .ddr3_addr(PL_DDR3_ADDR),
-    .ddr3_ba(PL_DDR3_BA),
-    .ddr3_cas_n(PL_DDR3_CAS_N),
-    .ddr3_ck_n(PL_DDR3_CK_N),
-    .ddr3_ck_p(PL_DDR3_CK_P),
-    .ddr3_cke(PL_DDR3_CKE),
-    .ddr3_ras_n(PL_DDR3_RAS_N),
-    .ddr3_reset_n(PL_DDR3_RESET_N),
-    .ddr3_we_n(PL_DDR3_WE_N),
-    .ddr3_dq(PL_DDR3_DQ),
-    .ddr3_dqs_n(PL_DDR3_DQS_N),
-    .ddr3_dqs_p(PL_DDR3_DQS_P),
-    .ddr3_dm(PL_DDR3_DM),
-    .ddr3_odt(PL_DDR3_ODT),
-
     // Internal DMA to PS
     .m_dma_tdata(s_axis_dma_tdata),
     .m_dma_tlast(s_axis_dma_tlast),
@@ -983,43 +834,6 @@ module e31x (
     .device_id(device_id)
   );
 
-  // PMU
-  axi_pmu inst_axi_pmu (
-    .s_axi_aclk(clk40),  // TODO: Original design used bus_clk
-    .s_axi_areset(clk40_rst),
-
-    .ss(AVR_CS_R),
-    .mosi(AVR_MOSI_R),
-    .sck(AVR_SCK_R),
-    .miso(AVR_MISO_R),
-
-    // AXI4-Lite: Write address port (domain: s_axi_aclk)
-    .s_axi_awaddr(m_axi_pmu_awaddr),
-    .s_axi_awvalid(m_axi_pmu_awvalid),
-    .s_axi_awready(m_axi_pmu_awready),
-    // AXI4-Lite: Write data port (domain: s_axi_aclk)
-    .s_axi_wdata(m_axi_pmu_wdata),
-    .s_axi_wstrb(m_axi_pmu_wstrb),
-    .s_axi_wvalid(m_axi_pmu_wvalid),
-    .s_axi_wready(m_axi_pmu_wready),
-    // AXI4-Lite: Write response port (domain: s_axi_aclk)
-    .s_axi_bresp(m_axi_pmu_bresp),
-    .s_axi_bvalid(m_axi_pmu_bvalid),
-    .s_axi_bready(m_axi_pmu_bready),
-    // AXI4-Lite: Read address port (domain: s_axi_aclk)
-    .s_axi_araddr(m_axi_pmu_araddr),
-    .s_axi_arvalid(m_axi_pmu_arvalid),
-    .s_axi_arready(m_axi_pmu_arready),
-    // AXI4-Lite: Read data port (domain: s_axi_aclk)
-    .s_axi_rdata(m_axi_pmu_rdata),
-    .s_axi_rresp(m_axi_pmu_rresp),
-    .s_axi_rvalid(m_axi_pmu_rvalid),
-    .s_axi_rready(m_axi_pmu_rready),
-
-    .s_axi_irq(pmu_irq)
-  );
-
-  assign AVR_IRQ = 1'b0;
 
 
 endmodule // e31x
