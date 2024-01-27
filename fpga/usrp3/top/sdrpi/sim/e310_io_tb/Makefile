@@ -15,7 +15,7 @@ include $(BASE_DIR)/../tools/make/viv_sim_preamble.mak
 #-------------------------------------------------
 # Define part using PART_ID (<device>/<package>/<speedgrade>)
 ARCH = zynq
-PART_ID= xc7z020/clg484/-1
+PART_ID= xc7z020/clg400/-1
 
 DESIGN_SRCS = $(abspath ../../e310_io.v) \
   $(abspath $(addprefix $(BASE_DIR)/../lib/control/, \

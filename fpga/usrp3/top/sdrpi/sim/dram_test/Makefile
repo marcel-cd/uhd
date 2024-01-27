@@ -15,7 +15,7 @@ include $(BASE_DIR)/../tools/make/viv_sim_preamble.mak
 #-------------------------------------------------
 # Define part using PART_ID (<device>/<package>/<speedgrade>)
 ARCH = zynq
-PART_ID= xc7z020/clg484/-1
+PART_ID= xc7z020/clg400/-1
 
 # Include makefiles and sources for the DUT and its dependencies
 include $(BASE_DIR)/../lib/fifo/Makefile.srcs
