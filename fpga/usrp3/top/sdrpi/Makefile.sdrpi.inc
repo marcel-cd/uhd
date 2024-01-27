@@ -40,6 +40,7 @@ include $(LIB_DIR)/rfnoc/blocks/rfnoc_block_ddc/Makefile.srcs
 include $(LIB_DIR)/rfnoc/blocks/rfnoc_block_duc/Makefile.srcs
 include $(LIB_DIR)/rfnoc/blocks/rfnoc_block_replay/Makefile.srcs
 include $(LIB_DIR)/rfnoc/blocks/rfnoc_block_axi_ram_fifo/Makefile.srcs
+include $(LIB_DIR)/rfnoc/blocks/rfnoc_block_fft/Makefile.srcs
 
 # If out-of-tree modules want to be compiled into this image, then they need to
 # pass in the RFNOC_OOT_MAKEFILE_SRCS as a list of Makefile.srcs files.
@@ -59,7 +60,6 @@ ppsloop.v \
 axi_pmu.v \
 spi_slave.v
 
-ifneq (IDLE,$(findstring IDLE, $(EXTRA_DEFS)))
 TOP_SRCS += e31x.v
 TOP_SRCS += e31x_core.v
 TOP_SRCS += e31x_dram.v
@@ -68,11 +68,6 @@ TOP_SRCS += $(EDGE_FILE) $(IMAGE_CORE)
 MB_XDC = \
 e31x_pins.xdc \
 e31x_timing.xdc
-else
-TOP_SRCS += e31x_idle.v
-MB_XDC = \
-e31x_idle_pins.xdc
-endif
 
 DRAM_SRCS = $(IP_DRAM_XCI_SRCS)
 
@@ -106,6 +101,7 @@ $(RFNOC_BLOCK_DUC_SRCS) $(RFNOC_BLOCK_DDC_SRCS) $(RFNOC_BLOCK_RADIO_SRCS) \
 $(RFNOC_BLOCK_AXI_RAM_FIFO_SRCS) \
 $(RFNOC_BLOCK_REPLAY_SRCS) \
 $(RFNOC_BLOCK_EXAMPLE_SRCS) \
+$(RFNOC_BLOCK_FFT) \
 $(abspath $(MB_XDC))
 
 EDGE_TBL_DEF="RFNOC_EDGE_TBL_FILE=$(call RESOLVE_PATH,$(EDGE_FILE))"

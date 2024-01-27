@@ -5,5 +5,5 @@
  */
 
 &fpga_full {
-	firmware-name = "e310_sg1.bin";
+	firmware-name = "sdrpi.bin";
 };

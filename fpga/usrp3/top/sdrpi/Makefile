@@ -33,12 +33,12 @@ ifndef TARGET
 endif
 TOP ?= e31x
 
-DEFAULT_IMAGE_CORE_FILE_E31X=e310_rfnoc_image_core.v
-DEFAULT_EDGE_FILE_E31X=$(abspath e310_static_router.hex)
+DEFAULT_IMAGE_CORE_FILE_SDRPI=e310_rfnoc_image_core.v
+DEFAULT_EDGE_FILE_SDRPI=$(abspath e310_static_router.hex)
 
 # vivado_build($1=Device, $2=Definitions)
-vivado_build = make -f Makefile.e31x.inc $(TARGET) NAME=$@ ARCH=$(XIL_ARCH_$1) PART_ID=$(XIL_PART_ID_$1) $2 TOP_MODULE=$(TOP) EXTRA_DEFS="$2" DEFAULT_RFNOC_IMAGE_CORE_FILE=$(DEFAULT_IMAGE_CORE_FILE_E31X) DEFAULT_EDGE_FILE=$(DEFAULT_EDGE_FILE_E31X)
-vivado_ip    = make -f Makefile.e31x.inc viv_ip    NAME=$@ ARCH=$(XIL_ARCH_$1) PART_ID=$(XIL_PART_ID_$1) $2 TOP_MODULE=$(TOP) EXTRA_DEFS="$2" DEFAULT_RFNOC_IMAGE_CORE_FILE=$(DEFAULT_IMAGE_CORE_FILE_E31X) DEFAULT_EDGE_FILE=$(DEFAULT_EDGE_FILE_E31X)
+vivado_build = make -f Makefile.sdrpi.inc $(TARGET) NAME=$@ ARCH=$(XIL_ARCH_$1) PART_ID=$(XIL_PART_ID_$1) $2 TOP_MODULE=$(TOP) EXTRA_DEFS="$2" DEFAULT_RFNOC_IMAGE_CORE_FILE=$(DEFAULT_IMAGE_CORE_FILE_SDRPI) DEFAULT_EDGE_FILE=$(DEFAULT_EDGE_FILE_SDRPI)
+vivado_ip    = make -f Makefile.sdrpi.inc viv_ip    NAME=$@ ARCH=$(XIL_ARCH_$1) PART_ID=$(XIL_PART_ID_$1) $2 TOP_MODULE=$(TOP) EXTRA_DEFS="$2" DEFAULT_RFNOC_IMAGE_CORE_FILE=$(DEFAULT_IMAGE_CORE_FILE_SDRPI) DEFAULT_EDGE_FILE=$(DEFAULT_EDGE_FILE_SDRPI)
 
 # post_build($1=Device, $2=Option)
 ifeq ($(TARGET),bin)
@@ -57,19 +57,14 @@ endif
 ##Supported Targets
 ##-----------------
 
-all:            SDRPI_IDLE SDRPI_SG1 ##(Default target)
+all:            SDRPI ##(Default target)
 
 ##SDRPI_IP:    Build IP for SDRPI only.
 SDRPI_IP:
 	+$(call vivado_ip,SDRPI,SDRPI=1)
 
-##SDRPI_IDLE:  Build USRP E3XX idle design (Speed Grade 1).
-SDRPI_IDLE E3XX_idle: SDRPI_IP build/usrp_e310_sg1_idle_fpga.dts
-	$(call vivado_build,SDRPI,$(DEFS) E310_IDLE_IMAGE=1 SDRPI=1)
-	$(call post_build,$@,SDRPI_IDLE)
-
 ##SDRPI:       Build USRP E3XX (Speed Grade 1).
-SDRPI E310: SDRPI_IP build/usrp_e310_sg1_fpga.dts
+SDRPI: SDRPI_IP build/usrp_sdrpi_fpga.dts
 	$(call vivado_build,SDRPI,$(DEFS) SDRPI=1 $(if $(DRAM),ENABLE_DRAM=0,))
 	$(call post_build,$@,SDRPI)
 
@@ -79,13 +74,13 @@ build/%.dts: dts/%.dts dts/*.dtsi
 
 clean:          ##Clean up all target build outputs.
 	@echo "Cleaning targets..."
-	@rm -rf build-E3*
+	@rm -rf build-SDRPI
 	@rm -rf build
 
 cleanall:       ##Clean up all target and ip build outputs.
 	@echo "Cleaning targets and IP..."
 	@rm -rf build-ip
-	@rm -rf build-E3*
+	@rm -rf build-SDRPI*
 	@rm -rf build
 
 help:           ##Show this help message.

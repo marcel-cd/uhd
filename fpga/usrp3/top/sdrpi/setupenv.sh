@@ -6,7 +6,7 @@ DISPLAY_NAME="USRP-SDRPI"
 REPO_BASE_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 
 declare -A PRODUCT_ID_MAP
-PRODUCT_ID_MAP["E310_SG1"]="zynq/xc7z020/clg400/-1"
+PRODUCT_ID_MAP["SDRPI"]="zynq/xc7z020/clg400/-1"
 
 # Set default part for simulation
 export ARCH=zynq
