@@ -9,5 +9,4 @@
 
 #include "sdrpi-fpga.dtsi"
 #include "sdrpi-common.dtsi"
-#include "sdrpi-pmu.dtsi"
 #include "dma-common.dtsi"

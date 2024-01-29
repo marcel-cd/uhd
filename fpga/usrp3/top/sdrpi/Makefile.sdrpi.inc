@@ -57,7 +57,6 @@ EDGE_FILE ?= $(DEFAULT_EDGE_FILE)
 
 TOP_SRCS = \
 ppsloop.v \
-axi_pmu.v \
 spi_slave.v
 
 TOP_SRCS += e31x.v

@@ -171,27 +171,6 @@ module e31x (
   wire [1:0]  m_axi_xbar_rresp;
   wire [31:0] m_axi_xbar_rdata;
 
-  // PMU
-  wire [31:0] m_axi_pmu_araddr;
-  wire [2:0]  m_axi_pmu_arprot;
-  wire        m_axi_pmu_arready;
-  wire        m_axi_pmu_arvalid;
-  wire [31:0] m_axi_pmu_awaddr;
-  wire [2:0]  m_axi_pmu_awprot;
-  wire        m_axi_pmu_awready;
-  wire        m_axi_pmu_awvalid;
-  wire        m_axi_pmu_bready;
-  wire [1:0]  m_axi_pmu_bresp;
-  wire        m_axi_pmu_bvalid;
-  wire [31:0] m_axi_pmu_rdata;
-  wire        m_axi_pmu_rready;
-  wire [1:0]  m_axi_pmu_rresp;
-  wire        m_axi_pmu_rvalid;
-  wire [31:0] m_axi_pmu_wdata;
-  wire        m_axi_pmu_wready;
-  wire [3:0]  m_axi_pmu_wstrb;
-  wire        m_axi_pmu_wvalid;
-
   // Internal Ethernet xport adapter to PS
   wire [63:0] h2e_tdata;
   wire [7:0]  h2e_tkeep;
@@ -521,27 +500,6 @@ module e31x (
     .m_axi_xbar_wready(m_axi_xbar_wready),
     .m_axi_xbar_wstrb(m_axi_xbar_wstrb),
     .m_axi_xbar_wvalid(m_axi_xbar_wvalid),
-
-    // PMU
-    .m_axi_pmu_araddr(m_axi_pmu_araddr),
-    .m_axi_pmu_arprot(m_axi_pmu_arprot),
-    .m_axi_pmu_arready(m_axi_pmu_arready),
-    .m_axi_pmu_arvalid(m_axi_pmu_arvalid),
-    .m_axi_pmu_awaddr(m_axi_pmu_awaddr),
-    .m_axi_pmu_awprot(m_axi_pmu_awprot),
-    .m_axi_pmu_awready(m_axi_pmu_awready),
-    .m_axi_pmu_awvalid(m_axi_pmu_awvalid),
-    .m_axi_pmu_bready(m_axi_pmu_bready),
-    .m_axi_pmu_bresp(m_axi_pmu_bresp),
-    .m_axi_pmu_bvalid(m_axi_pmu_bvalid),
-    .m_axi_pmu_rdata(m_axi_pmu_rdata),
-    .m_axi_pmu_rready(m_axi_pmu_rready),
-    .m_axi_pmu_rresp(m_axi_pmu_rresp),
-    .m_axi_pmu_rvalid(m_axi_pmu_rvalid),
-    .m_axi_pmu_wdata(m_axi_pmu_wdata),
-    .m_axi_pmu_wready(m_axi_pmu_wready),
-    .m_axi_pmu_wstrb(m_axi_pmu_wstrb),
-    .m_axi_pmu_wvalid(m_axi_pmu_wvalid),
 
     // DMA
     .s_axis_dma_tdata(e2h_tdata),
