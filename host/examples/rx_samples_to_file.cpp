@@ -72,9 +72,9 @@ double disk_rate_check(const size_t sample_type_size,
     try {
         boost::process::child c(
             disk_check_proc_str, boost::process::std_err > pipe_stream);
-        if (!c.wait_for(std::chrono::duration<float>(1s))) {
-            kill(c.id(), SIGINT);
-            c.wait();
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        if (c.running()) {
+            c.terminate();
         }
     } catch (std::system_error& err) {
         std::cerr << err_msg << std::endl;
@@ -175,12 +175,23 @@ void recv_to_file(uhd::usrp::multi_usrp::sptr usrp,
     }
 
     std::vector<std::ofstream> outfiles(rx_stream->get_num_channels());
+    std::string filename;
     for (size_t ch = 0; ch < rx_stream->get_num_channels(); ch++) {
         if (not null) {
-            std::string filename =
-                rx_stream->get_num_channels() == 1
-                    ? file
-                    : "ch" + std::to_string(channel_nums[ch]) + "_" + file;
+            if (rx_stream->get_num_channels() == 1) { // single channel
+                filename = file;
+            } else { // multiple channels
+                // check if file extension exists
+                if (file.find('.') != std::string::npos) {
+                    const std::string base_name = file.substr(0, file.find_last_of('.'));
+                    const std::string extension = file.substr(file.find_last_of('.'));
+                    filename = base_name + "_" + "ch" + std::to_string(channel_nums[ch])
+                               + extension;
+                } else {
+                    // file extension does not exist
+                    filename = file + "_" + "ch" + std::to_string(channel_nums[ch]);
+                }
+            }
             outfiles[ch].open(filename.c_str(), std::ofstream::binary);
         }
     }

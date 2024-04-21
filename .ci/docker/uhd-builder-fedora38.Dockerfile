@@ -1,7 +1,7 @@
 # please follow docker best practices
 # https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/
 
-FROM fedora:36
+FROM fedora:38
 LABEL maintainer="Ettus Research"
 
 RUN dnf install -y \
@@ -20,6 +20,7 @@ RUN dnf install -y \
         make \
         ncompress \
         ninja-build \
+        pybind11-devel \
         python3-devel \
         python3-docutils \
         python3-mako \
